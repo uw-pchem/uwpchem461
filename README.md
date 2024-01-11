@@ -12,10 +12,10 @@ The first step towards data analysis is to read the data into a variable name
 get_OO_Data.py
 ```
 
-# Experiment 
+## Experiment 
 
 ## Outline for Chem461 Winter Quarter
-# Tasks
+### Tasks
     1. Set up github page
     2. Set up and test-install environment: miniconda, jupyter notebook
     3. Translate the following matlab codes:
@@ -39,7 +39,7 @@ get_OO_Data.py
         b. Week 1 Tutorial.pdf
         c. Weak 2 Tutorial.pdf
         d. Week 3 Tutorial.pdf
-# Time Allocated for Tasks
+### Time Allocated for Tasks
     Week 1: Orientation, set hours
     Week 2: Make outline, do Task 1
     Week 3: do Task 2 // Task 4a - with Sarah's help
