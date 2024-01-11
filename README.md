@@ -12,7 +12,22 @@ The first step towards data analysis is to read the data into a variable name
 get_OO_Data.py
 ```
 
-## Experiment 
+## Experiments
+### Exp 42: Infrared Spectra of HCl and DCl
+This experiment estimates the vibrational and rotational transition energy of
+HCl, using a harmonic oscillator model (with anharmonic corrections) for the
+energy spectrum. Following, the thermodynamic and statistical mechanical quantities 
+of the HCl system are estimated. This estimated quantities of HCl are compared
+to that of DCl to determine the isotope effect between the systems. The
+analysis is demonstrated in:
+```
+exp42_analyze_data.ipynb
+```
+The following code is also used for baseline corrections of the IR spectra:
+```
+GetBase.m
+```
+This code is a module within the class object for this experiment.
 
 ## Outline for Chem461 Winter Quarter
 ### Tasks
