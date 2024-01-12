@@ -6,6 +6,7 @@ focuses more on the data analysis as it provides an introduction to statisticall
 data through scientific computing.
 
 ## Reading the data
+
 The first step towards data analysis is to read the data into a variable name 
 (or data structure). The following modules can be used:
 ```
@@ -13,6 +14,7 @@ get_OO_Data.py
 ```
 
 ## Experiments
+
 ### Exp 42: Infrared Spectra of HCl and DCl
 This experiment estimates the vibrational and rotational transition energy of
 HCl, using a harmonic oscillator model (with anharmonic corrections) for the
@@ -40,7 +42,8 @@ rate constant. Analysis for the fitting procedure is demonstrated in tutorials
 blockavgM.py
 ```
 This code is a module within the class object for this experiment.
-### Exp 3:
+
+### Exp 3: Heats of Combustion
 This experiment determines the thermodynamic quantities of the combustion of
 cyclohexane, cyclohexene, benzene, hexane, to study the effects of resonance
 stability. The estimated heat capacity of a calorimetry and the temperature
@@ -50,6 +53,40 @@ model described in the following code:
 caloexp.py
 ```
 This code is a module within the class object for this experiment.
+
+### Exp 9: Liquid-Vapor Equilibrium in Binary Systems
+This experiment estimates the Flory-Huggins parameter for the Regular
+Solution Theory that is used as a correction to Raoult's law, which fails to
+describe the phase-diagram for azeotropes. The fit model procedure for the 
+Flory-Huggins solution theory is described in the follwing code:
+```
+rst.py
+```
+This code is a module within the class object for this experiment.
+
+## Tutorials
+The tutorial (jupyter) notebooks demonstrate the techniques of the modules
+used for analysing the dataset of the experiments. For demonstrations of how to
+read a file see:
+```
+caloexp.py
+```
+This tutorial also introduces the least square fitting procedure, based on the
+module:
+```
+tutorial1.ipynb
+```
+For demonstrations on how to write functions (e.g the exponential functions)
+used for fitting data (e.g. absorbance vs time data) see
+```
+tutorial2.ipynb
+```
+For all the estimated quanties derived from the fit parameters, there must be
+an error analysis. In this class, guassian error propagation is used, which is
+introduced in
+```
+tutorial3.ipynb
+```
 
 ## Outline for Chem461 Winter Quarter
 ### Tasks
