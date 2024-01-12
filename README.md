@@ -88,7 +88,7 @@ introduced in
 tutorial3.ipynb
 ```
 
-<! -- 
+<! 
 ## Outline for Chem461 Winter Quarter
 ### Tasks
     1. Set up github page
@@ -124,4 +124,4 @@ tutorial3.ipynb
     Week 7: do Task 3d // Task 4c (with Sarah's help)
     Week 8: do Task 3e // Task 4c (with Sarah's help)
     Week 9: do Task 3f // Task 4d (with Sarah's help)
--->
+>
