@@ -82,12 +82,13 @@ used for fitting data (e.g. absorbance vs time data) see
 tutorial2.ipynb
 ```
 For all the estimated quanties derived from the fit parameters, there must be
-an error analysis. In this class, guassian error propagation is used, which is
+an error analysis. In this class, gaussian error propagation is used, which is
 introduced in
 ```
 tutorial3.ipynb
 ```
 
+<! -- 
 ## Outline for Chem461 Winter Quarter
 ### Tasks
     1. Set up github page
@@ -123,3 +124,4 @@ tutorial3.ipynb
     Week 7: do Task 3d // Task 4c (with Sarah's help)
     Week 8: do Task 3e // Task 4c (with Sarah's help)
     Week 9: do Task 3f // Task 4d (with Sarah's help)
+-->
