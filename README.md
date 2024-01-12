@@ -25,7 +25,29 @@ exp42_analyze_data.ipynb
 ```
 The following code is also used for baseline corrections of the IR spectra:
 ```
-GetBase.m
+getbase.py
+```
+This code is a module within the class object for this experiment.
+
+### Exp 1: Spectrometry and Chemical Kinetics
+This experiment estimates the rate constant for the product and intermediate
+species of penicillin hydrolysis. The reaction rate is first-order, thus
+fitting an exponential curve to the absorbance versus time data estimates
+certain parameters of the initial concentration, final concentration and the
+rate constant. Analysis for the fitting procedure is demonstrated in tutorials
+1 and 2. The following code is used for block averaging the large dataset:
+```
+blockavgM.py
+```
+This code is a module within the class object for this experiment.
+### Exp 3:
+This experiment determines the thermodynamic quantities of the combustion of
+cyclohexane, cyclohexene, benzene, hexane, to study the effects of resonance
+stability. The estimated heat capacity of a calorimetry and the temperature
+difference is used. The change in temperature is estimated based on the fit
+model described in the following code:
+```
+caloexp.py
 ```
 This code is a module within the class object for this experiment.
 
