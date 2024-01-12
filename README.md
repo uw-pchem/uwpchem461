@@ -74,12 +74,12 @@ tutorial1.ipynb
 This tutorial also introduces the least square fitting procedure, based on the
 module:
 ```
-tutorial1.ipynb
+zlstsq.ipynb
 ```
 For demonstrations on how to write functions (e.g the exponential functions)
 used for fitting data (e.g. absorbance vs time data) see
 ```
-zlstsq.ipynb
+tutorial2.ipynb
 ```
 For all the estimated quanties derived from the fit parameters, there must be
 an error analysis. In this class, guassian error propagation is used, which is
