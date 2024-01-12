@@ -69,7 +69,7 @@ The tutorial (jupyter) notebooks demonstrate the techniques of the modules
 used for analysing the dataset of the experiments. For demonstrations of how to
 read a file see:
 ```
-caloexp.py
+tutorial1.ipynb
 ```
 This tutorial also introduces the least square fitting procedure, based on the
 module:
@@ -79,7 +79,7 @@ tutorial1.ipynb
 For demonstrations on how to write functions (e.g the exponential functions)
 used for fitting data (e.g. absorbance vs time data) see
 ```
-tutorial2.ipynb
+zlstsq.ipynb
 ```
 For all the estimated quanties derived from the fit parameters, there must be
 an error analysis. In this class, guassian error propagation is used, which is
