@@ -1,0 +1,14 @@
+prefix=/Users/praizanyanwu/Documents/python/miniconda/envs/singlephoton
+exec_prefix=/Users/praizanyanwu/Documents/python/miniconda/envs/singlephoton
+libdir=/Users/praizanyanwu/Documents/python/miniconda/envs/singlephoton/lib
+includedir=/Users/praizanyanwu/Documents/python/miniconda/envs/singlephoton/include
+
+Name: FreeType 2
+URL: https://freetype.org
+Description: A free, high-quality, and portable font engine.
+Version: 24.0.18
+Requires:
+Requires.private: 
+Libs: -L${libdir} -lfreetype
+Libs.private: -lz -L/Users/praizanyanwu/Documents/python/miniconda/envs/singlephoton/lib -lpng16 -lz
+Cflags: -I${includedir}/freetype2
