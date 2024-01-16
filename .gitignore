@@ -1,2 +1,4 @@
 
-outline.txt
+.outline.txt
+pchem/__pycache__/
+tests/__pycache__
