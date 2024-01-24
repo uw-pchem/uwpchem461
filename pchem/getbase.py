@@ -52,6 +52,7 @@ class Analyse():
         ## now use the good index points, which represents the fit points
         ## that is spread out uniformly across the dataset and below hibar, 
         ## to interpolate a baseline
+        xk = x[K]; yk = y[K];
         yb = sp.interpolate.CubicSpline(xk, yk)
         baseline = yb(x)
 
