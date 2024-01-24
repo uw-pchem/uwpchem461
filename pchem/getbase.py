@@ -1,7 +1,8 @@
 import numpy as np
 import scipy as sp
 
-Class Analyse():
+
+class Analyse():
     """analyse dataset from chem 461"""
 
     def __init__(self):
