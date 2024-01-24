@@ -49,8 +49,8 @@ class Analyse():
             idx = np.where((y[KN] - y[K]) < 0);
             K[idx] = KN[idx]
 
-        ## now use the good index points, which represents the fit points
-        ## that is spread out uniformly across the dataset and below hibar, 
+        ## now use the good indexes, which represents the fit points
+        ## that are spread out uniformly across the dataset and below hibar, 
         ## to interpolate a baseline
         xk = x[K]; yk = y[K];
         yb = sp.interpolate.CubicSpline(xk, yk)
