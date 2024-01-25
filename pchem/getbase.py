@@ -14,7 +14,7 @@ class Analyse():
         Input:
         ds - n by 2 array, dataset
         hibar - scalar, height value below which baseline is established
-        nfitpts - scalar, number of points to be used for fitting a baseline
+        nfitpts - scalar, number of fit points used to interpolate a baseline
         Output:
         baseline = n by 1 array
         """
