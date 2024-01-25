@@ -8,7 +8,7 @@ class Analyse():
     def __init__(self):
         """Initializing"""
 
-    def getbase(self, ds, hibar, nfitpts=17):
+    def getbase(self, ds, hibar, nfitpts=30, adjust=25):
         """
         determine a baseline from experiment 42 dataset
         Input:
@@ -19,40 +19,50 @@ class Analyse():
         baseline = n by 1 array
         """
         ## parse dataset
-        x = ds[:,0]
-        y = ds[:,1]
+        dsarr = np.array(ds)
+        x = dsarr[:, 0]
+        y = dsarr[:, 1]
         npts = len(x)
         ## define a uniform increment, dN, across the length of the dataset
         dN = npts/nfitpts
         K = np.linspace(0.5, (nfitpts - 0.5), nfitpts)*dN
         K = K.round().astype(int)
         ## determine the sign of the derivative across the dataset
-        dK = np.full(nfitpts, 2, dtype=int)
         KI = K[1:-1]
-        MD = np.sign(y[KI + dk] - y[KI])
+        dK = np.full(len(KI), dN/adjust)
+        dK = dK.round().astype(int)
+        MD = np.sign(y[KI + dK] - y[KI])
         MD = np.append([-1], MD)
         MD = np.append(MD, [1])
+        MD = MD.astype(int)
         ## nudge the y-values downards until they are below at hibar
         nudgefac = np.rint(0.0004*npts)
         if (nudgefac < 1): nudgefac = 1
-        idx = np.where(y[K] > hibar)
+        idx = np.where(y[K] > hibar)[0]
+        # print(idx.size)
+        # print(K.size)
+        # print(MD.size)
+        # print(idx); print(K); print(MD)
+        # print(y[K])
         while(idx.size):
             ## if y is increasing then move in the reverse direction
             ## so use MD to determine the slope of y
             K[idx] = K[idx] - MD[idx]*nudgefac
-            idx = np.where(y[K] > hibar)
+            idx = np.where(y[K] > hibar)[0]
 
         ## now keep nudging the y-values until a little upwards
-        idx = np.linspace(0, nfitpts)
+        idx = np.linspace(0, nfitpts)[0]
         while(idx.size):
             KN = K - MD*nudgefac
-            idx = np.where((y[KN] - y[K]) < 0);
+            KN = KN.round().astype(int)
+            idx = np.where((y[KN] - y[K]) < 0)[0];
             K[idx] = KN[idx]
 
         ## now use the good indexes, which represents the fit points
         ## that are spread out uniformly across the dataset and below hibar, 
         ## to interpolate a baseline
-        xk = x[K]; yk = y[K];
+        xk = np.flip(x[K])  # arrange values in increasing sequence
+        yk = np.flip(y[K])
         yb = sp.interpolate.CubicSpline(xk, yk)
         baseline = yb(x)
 
@@ -109,3 +119,9 @@ class Opener():
             for line in f:
                 linetrunc_x = line[0:6].strip()
                 linetrunc_y = line[8:].strip()
+                # convert string array to number array
+                data = [float(linetrunc_x), float(linetrunc_y)]
+                data_abs = [data[0], -np.log10(data[1]/100)] 
+                ds.append(data_abs)
+
+        return ds, dnfn
