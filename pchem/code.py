@@ -68,6 +68,50 @@ class Analyse():
 
         return baseline
 
+    def caloexp(pars, time, tstart=30, Tstart=292, Tres=290):
+        """
+        This models the temperature rise of the Paar Calorimeter
+        dT/dt = RIn - RLoss*(Yloop - Tres) + beta*DeltaT*exp(-beta*(time -
+            tstart))
+        It is defined for scipy's fitting procedure in order to optimized
+        that temperature rise as a function of time
+        Input:    
+        time - n by 1 array [sec]
+        pars - parameters to optimize in pars = [RIn RLoss beta DeltaT];
+            RIn - the stirrer temperature rate [K/sec]
+            RLoss - the rate of loss [1/sec]
+            beta - rate of heat injection due to reaction [1/sec]
+                heat is on from t=0  to  t= 1/beta/2
+            DeltaT - net rise of temperature due to chemical reaction [K]
+            e.g. pars = [0.003 0.001 0.02 5]
+        default paremeters as karg
+        tstart=30 - begining of reaction (heat of combution) [sec]
+        Tstart=292 - the first temperature in the data [K]
+        Tres=290 - temperature of the reservoir (or room) [K]
+        """
+    
+        # Set up the heating part that goes from tstart  this is the heating region.
+        idheat = [i for i, j in enumerate(time) if j > tstart]
+        # the set of indicies for the time that cover the heating range.
+        # Nheat = length(idheat);  % number of points in that range.
+        Zt = [time[i] - tstart for i in idheat]
+        # The temperature in the Zt range from start end
+        TZ = [beta*DeltaT*(math.exp(-RLoss*i) - math.exp(-beta*i))/(beta-RLoss) for i in Zt]
+        Tmod = [0] * len(time)
+        for i, j in zip(idheat, TZ):
+            Tmod[i] = j
+    
+        # the heat in and heat loss term is added to the Tmod (due to reaction heating)
+        Eloss = [math.exp(-RLoss*i) for i in time]
+        Zloss = []
+        if( RLoss < 1e-7):  # take the limit if user sets RLoss=0
+            Zloss = time
+        else:
+            Zloss = [(1-i)/RLoss for i in Eloss]
+    
+        TI = [RIn*i + Tres*j + Tres*(1-j) for i, j in zip(Zloss, Eloss)]
+        return [i + j for i, j in zip(Tmod, TI)]
+
 
 class Opener():
     """read dataset from chem461"""
