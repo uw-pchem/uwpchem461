@@ -1,5 +1,5 @@
 import numpy as np
-import scipy as sp
+from scipy import linalg
 
 
 class Analyse():
@@ -39,11 +39,6 @@ class Analyse():
         nudgefac = np.rint(0.0004*npts)
         if (nudgefac < 1): nudgefac = 1
         idx = np.where(y[K] > hibar)[0]
-        # print(idx.size)
-        # print(K.size)
-        # print(MD.size)
-        # print(idx); print(K); print(MD)
-        # print(y[K])
         while(idx.size):
             ## if y is increasing then move in the reverse direction
             ## so use MD to determine the slope of y
@@ -68,49 +63,56 @@ class Analyse():
 
         return baseline
 
-    def caloexp(pars, time, tstart=30, Tstart=292, Tres=290):
-        """
-        This models the temperature rise of the Paar Calorimeter
-        dT/dt = RIn - RLoss*(Yloop - Tres) + beta*DeltaT*exp(-beta*(time -
-            tstart))
-        It is defined for scipy's fitting procedure in order to optimized
-        that temperature rise as a function of time
-        Input:    
-        time - n by 1 array [sec]
-        pars - parameters to optimize in pars = [RIn RLoss beta DeltaT];
-            RIn - the stirrer temperature rate [K/sec]
-            RLoss - the rate of loss [1/sec]
-            beta - rate of heat injection due to reaction [1/sec]
-                heat is on from t=0  to  t= 1/beta/2
-            DeltaT - net rise of temperature due to chemical reaction [K]
-            e.g. pars = [0.003 0.001 0.02 5]
-        default paremeters as karg
-        tstart=30 - begining of reaction (heat of combution) [sec]
-        Tstart=292 - the first temperature in the data [K]
-        Tres=290 - temperature of the reservoir (or room) [K]
-        """
-    
-        # Set up the heating part that goes from tstart  this is the heating region.
-        idheat = [i for i, j in enumerate(time) if j > tstart]
-        # the set of indicies for the time that cover the heating range.
-        # Nheat = length(idheat);  % number of points in that range.
-        Zt = [time[i] - tstart for i in idheat]
-        # The temperature in the Zt range from start end
-        TZ = [beta*DeltaT*(math.exp(-RLoss*i) - math.exp(-beta*i))/(beta-RLoss) for i in Zt]
-        Tmod = [0] * len(time)
-        for i, j in zip(idheat, TZ):
-            Tmod[i] = j
-    
-        # the heat in and heat loss term is added to the Tmod (due to reaction heating)
-        Eloss = [math.exp(-RLoss*i) for i in time]
-        Zloss = []
-        if( RLoss < 1e-7):  # take the limit if user sets RLoss=0
-            Zloss = time
-        else:
-            Zloss = [(1-i)/RLoss for i in Eloss]
-    
-        TI = [RIn*i + Tres*j + Tres*(1-j) for i, j in zip(Zloss, Eloss)]
-        return [i + j for i, j in zip(Tmod, TI)]
+#    def caloexp(pars, time, tstart=30, Tstart=292, Tres=290):
+#        """
+#        This models the temperature rise of the Paar Calorimeter
+#        dT/dt = RIn - RLoss*(Yloop - Tres) + beta*DeltaT*exp(-beta*(time -
+#            tstart))
+#        It is defined for scipy's fitting procedure in order to optimized
+#        that temperature rise as a function of time
+#        Input:    
+#        time - n by 1 array [sec]
+#        pars - parameters to optimize in pars = [RIn RLoss beta DeltaT];
+#            rate_in - the stirrer temperature rate [K/sec]
+#            rate_loss - the rate of loss [1/sec]
+#            beta - rate of heat injection due to reaction [1/sec]
+#                heat is on from t=0  to  t= 1/beta/2
+#            DeltaT - net rise of temperature due to chemical reaction [K]
+#            e.g. pars = [0.003 0.001 0.02 5]
+#        default paremeters as karg
+#        tstart=30 - begining of reaction (heat of combution) [sec]
+#        Tstart=292 - the first temperature in the data [K]
+#        Tres=290 - temperature of the reservoir (or room) [K]
+#        """
+#        # Parse the input
+#        if not pars:
+#            pars = [0.003 0.001 0.02 5]
+#
+#        rate_gain = pars[0]
+#        rate_loss = pars[1]
+#        beta = pars[2]
+#        DeltaT = pars[3]
+#        # Set up the heating part that goes from tstart  this is the heating region.
+#        idheat = [i for i, j in enumerate(time) if j > tstart]
+#        # the set of indicies for the time that cover the heating range.
+#        # Nheat = length(idheat);  % number of points in that range.
+#        Zt = [time[i] - tstart for i in idheat]
+#        # The temperature in the Zt range from start end
+#        TZ = [beta*DeltaT*(math.exp(-RLoss*i) - math.exp(-beta*i))/(beta-RLoss) for i in Zt]
+#        Tmod = [0] * len(time)
+#        for i, j in zip(idheat, TZ):
+#            Tmod[i] = j
+#    
+#        # the heat in and heat loss term is added to the Tmod (due to reaction heating)
+#        Eloss = [math.exp(-RLoss*i) for i in time]
+#        Zloss = []
+#        if( RLoss < 1e-7):  # take the limit if user sets RLoss=0
+#            Zloss = time
+#        else:
+#            Zloss = [(1-i)/RLoss for i in Eloss]
+#    
+#        TI = [RIn*i + Tres*j + Tres*(1-j) for i, j in zip(Zloss, Eloss)]
+#        return [i + j for i, j in zip(Tmod, TI)]
 
 
 class Opener():
@@ -169,3 +171,48 @@ class Opener():
                 ds.append(data_abs)
 
         return ds, dnfn
+
+
+class Fitpolynomial():
+    """
+    Use the method of least-squares to fit a polynomial to a dataset
+    """
+
+    def __init__(self):
+        """
+        par -  k by 1 array, the elements are the fit parameters,
+            where n is the degree of the polynomial
+        yf - n by 1 array, the estimated y-values based on the fit 
+            parameters:
+            yf = M*par
+            yf = par[0]*x^k + par[1]*x^(k - 1) ... + par[k]*x^0
+        M - n by k array, model matrix:
+            M = [x^k + x^(k - 1) ... + x^0]
+        V - k by k array, the reduced "variance-covariance" matrix:
+            V = M^(-1)*M
+        stefit - standard errors of the fit's estimated y-values
+        stepar - standard errors of the parameters
+        steyf - standard deviation of the fit's estimated y-values
+        """
+        self.par = []
+        self.stepar = []
+        self.stefit = []
+        self.steyf = []
+
+    def zlstsq(self, xdata, yata, degree):
+        """
+        the least-squares fitting procedure to the dataset:
+        Input:
+        xdata - n by 1 array, x-values of dataset
+        ydata - n by 1 array, y-values of dataset
+        degree - scalar, the degree of the polynomial
+        """
+        x = np.array(xdata); y = np.array(ydata)
+        # the model matrix: M = [x^k + x^(k - 1) ... + x^0]
+        M = np.array([x**k for k in reversed(range((degree + 1)))])
+        M = M.transpose()
+        # this is the heart of this method, which depends on the fact that
+        # there exists an inverse matrix of the model matrix
+        inverseM = linalg.inv(M)
+
+
