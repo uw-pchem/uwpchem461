@@ -1,5 +1,6 @@
 import numpy as np
-from scipy import linalg
+import pandas as pd
+import scipy as sp
 
 
 class Analyse():
@@ -121,32 +122,48 @@ class Opener():
     def __init__(self):
        """Initializing""" 
 
-    def get_oo_data(self, dnfn, start=13, headerlines=0, d=","):
+    def get_data(self, dnfn):
         """
-        method to read ocean optics data
+        method to read text/csv data using pandas' package
         Input:
-        dnfn - path to file
-        start - skips first thirteen chars of each line in ocean optics data
+        dnfn - string, path to file
         Output:
-        ds - dataset
-        dnfn - path to file returned
+        data - array, data array
         """
-        ds = np.array([[0, 0]])
+        # the dataframe of pandas
+        df = pd.read_csv(dnfn)
+        # convert dataframe into numpy array
+        ds = df.to_numpy()
 
-        with open(dnfn, 'rt') as f:
+        return ds
 
-            # skip header lines
-            for i in range(headerlines):
-                next(f)
 
-            # readline and convert string to number array
-            for line in f:
-                linetrunc = line[start:].strip()
-                # convert string array to number array
-                linedata = np.fromstring(linetrunc, dtype=float, sep=d)
-                np.append(ds, [linedata])
-
-        return ds[1:,1:], dnfn
+#     def get_oo_data(self, dnfn, start=13, headerlines=0, d=","):
+#         """
+#         method to read ocean optics data
+#         Input:
+#         dnfn - path to file
+#         start - skips first thirteen chars of each line in ocean optics data
+#         Output:
+#         ds - dataset
+#         dnfn - path to file returned
+#         """
+#         ds = np.array([[0, 0]])
+# 
+#         with open(dnfn, 'rt') as f:
+# 
+#             # skip header lines
+#             for i in range(headerlines):
+#                 next(f)
+# 
+#             # readline and convert string to number array
+#             for line in f:
+#                 linetrunc = line[start:].strip()
+#                 # convert string array to number array
+#                 linedata = np.fromstring(linetrunc, dtype=float, sep=d)
+#                 np.append(ds, [linedata])
+# 
+#         return ds[1:,1:], dnfn
 
 
     def get_txt_data(self, dnfn, headerlines=2):
@@ -173,46 +190,46 @@ class Opener():
         return ds, dnfn
 
 
-class Fitpolynomial():
-    """
-    Use the method of least-squares to fit a polynomial to a dataset
-    """
-
-    def __init__(self):
-        """
-        par -  k by 1 array, the elements are the fit parameters,
-            where n is the degree of the polynomial
-        yf - n by 1 array, the estimated y-values based on the fit 
-            parameters:
-            yf = M*par
-            yf = par[0]*x^k + par[1]*x^(k - 1) ... + par[k]*x^0
-        M - n by k array, model matrix:
-            M = [x^k + x^(k - 1) ... + x^0]
-        V - k by k array, the reduced "variance-covariance" matrix:
-            V = M^(-1)*M
-        stefit - standard errors of the fit's estimated y-values
-        stepar - standard errors of the parameters
-        steyf - standard deviation of the fit's estimated y-values
-        """
-        self.par = []
-        self.stepar = []
-        self.stefit = []
-        self.steyf = []
-
-    def zlstsq(self, xdata, yata, degree):
-        """
-        the least-squares fitting procedure to the dataset:
-        Input:
-        xdata - n by 1 array, x-values of dataset
-        ydata - n by 1 array, y-values of dataset
-        degree - scalar, the degree of the polynomial
-        """
-        x = np.array(xdata); y = np.array(ydata)
-        # the model matrix: M = [x^k + x^(k - 1) ... + x^0]
-        M = np.array([x**k for k in reversed(range((degree + 1)))])
-        M = M.transpose()
-        # this is the heart of this method, which depends on the fact that
-        # there exists an inverse matrix of the model matrix
-        inverseM = linalg.inv(M)
+# class Fitpolynomial():
+#     """
+#     Use the method of least-squares to fit a polynomial to a dataset
+#     """
+# 
+#     def __init__(self):
+#         """
+#         par -  k by 1 array, the elements are the fit parameters,
+#             where n is the degree of the polynomial
+#         yf - n by 1 array, the estimated y-values based on the fit 
+#             parameters:
+#             yf = M*par
+#             yf = par[0]*x^k + par[1]*x^(k - 1) ... + par[k]*x^0
+#         M - n by k array, model matrix:
+#             M = [x^k + x^(k - 1) ... + x^0]
+#         V - k by k array, the reduced "variance-covariance" matrix:
+#             V = M^(-1)*M
+#         stefit - standard errors of the fit's estimated y-values
+#         stepar - standard errors of the parameters
+#         steyf - standard deviation of the fit's estimated y-values
+#         """
+#         self.par = []
+#         self.stepar = []
+#         self.stefit = []
+#         self.steyf = []
+# 
+#     def zlstsq(self, xdata, yata, degree):
+#         """
+#         the least-squares fitting procedure to the dataset:
+#         Input:
+#         xdata - n by 1 array, x-values of dataset
+#         ydata - n by 1 array, y-values of dataset
+#         degree - scalar, the degree of the polynomial
+#         """
+#         x = np.array(xdata); y = np.array(ydata)
+#         # the model matrix: M = [x^k + x^(k - 1) ... + x^0]
+#         M = np.array([x**k for k in reversed(range((degree + 1)))])
+#         M = M.transpose()
+#         # this is the heart of this method, which depends on the fact that
+#         # there exists an inverse matrix of the model matrix
+#         inverseM = linalg.inv(M)
 
 
