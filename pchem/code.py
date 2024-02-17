@@ -89,9 +89,6 @@ class Analyse():
         temperature_curve - n by 1 array, the temperature range [K]
         """
         # Parse the input
-        if not pars:
-            pars = [0.003, 0.001, 0.02, 5]
-    
         rate_heatgain = pars[0]
         rate_heatloss = pars[1]
         beta = pars[2]

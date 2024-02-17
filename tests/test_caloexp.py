@@ -15,7 +15,7 @@ def test_caloexp():
     opener = Opener()
     analyse = Analyse()
     ds = opener.get_data(dnfn)
-    temperature_curve = analyse.caloexp(ds[:, 0], [])    
+    temperature_curve = analyse.caloexp(ds[:, 0], [0.003, 0.001, 0.02, 5])    
     ## check shape of file
     try:    
         assert(len(temperature_curve) == len(ds[:, 0]))
