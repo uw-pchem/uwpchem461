@@ -93,6 +93,12 @@ class Analyse():
         rate_heatloss = pars[1]
         beta = pars[2]
         DeltaT = pars[3]
+        var1 = input("What is the starting time (seconds) of the combustion? ")
+        var2 = input("What is the temperature (Kelvin) at the starting time? ")
+        var3 = input("What is the room temperature (Kelvin)? ")
+        tstart = float(var1)
+        Tstart = float(var2)
+        Tres = float(var3)
         # Set up the heating part that goes from tstart 
         # this is the heating region.
         idheat = [i for i, j in enumerate(time) if j >= tstart]
