@@ -65,7 +65,8 @@ class Analyse():
 
         return baseline
 
-    def caloexp(self, time, pars):
+    @staticmethod
+    def caloexp(time, pars):
         """
         This models the temperature rise of the Paar Calorimeter
         dT/dt = RIn - RLoss*(Yloop - Tres) + beta*DeltaT*exp(-beta*(time -
