@@ -77,12 +77,12 @@ class Analyse():
         Input:    
         time - n by 1 array [sec]
         parameters to optimize:
-        rate_heatgain - the stirrer temperature rate [K/sec]
-        rate_heatloss - the rate of loss [1/sec]
-        beta - rate of heat injection due to reaction [1/sec]
+        rate_heatgain - rate of heat gain from the stirrer [K/sec]
+        rate_heatloss - the rate of heat loss [1/sec]
+        beta - rate of heat gain due to reaction [1/sec]
             heat is on from t=0  to  t= 1/beta/2
         temperature_chage - net rise of temperature due to chemical reaction [K]
-        e.g.parameters to optimize: pars = [0.003 0.001 0.02 5]
+        e.g. of guess parameters to optimize: pars = [0.003 0.001 0.02 5]
         default paremeters as karg
         tstart=30 - begining of reaction (heat of combution) [sec]
         Tstart=292 - the first temperature in the data [K]
