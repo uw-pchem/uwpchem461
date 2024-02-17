@@ -66,7 +66,7 @@ class Analyse():
         return baseline
 
     @staticmethod
-    def caloexp(time, pars):
+    def caloexp(time, rate_heatgain, rate_heatloss, beta, temperature_change):
         """
         This models the temperature rise of the Paar Calorimeter
         dT/dt = RIn - RLoss*(Yloop - Tres) + beta*DeltaT*exp(-beta*(time -
@@ -75,13 +75,13 @@ class Analyse():
         that temperature rise as a function of time
         Input:    
         time - n by 1 array [sec]
-        pars - parameters to optimize in pars = [RIn RLoss beta DeltaT];
-            rate_in - the stirrer temperature rate [K/sec]
-            rate_loss - the rate of loss [1/sec]
-            beta - rate of heat injection due to reaction [1/sec]
-                heat is on from t=0  to  t= 1/beta/2
-            DeltaT - net rise of temperature due to chemical reaction [K]
-            e.g. pars = [0.003 0.001 0.02 5]
+        parameters to optimize:
+        rate_heatgain - the stirrer temperature rate [K/sec]
+        rate_heatloss - the rate of loss [1/sec]
+        beta - rate of heat injection due to reaction [1/sec]
+            heat is on from t=0  to  t= 1/beta/2
+        temperature_chage - net rise of temperature due to chemical reaction [K]
+        e.g.parameters to optimize: pars = [0.003 0.001 0.02 5]
         default paremeters as karg
         tstart=30 - begining of reaction (heat of combution) [sec]
         Tstart=292 - the first temperature in the data [K]
@@ -90,10 +90,6 @@ class Analyse():
         temperature_curve - n by 1 array, the temperature range [K]
         """
         # Parse the input
-        rate_heatgain = pars[0]
-        rate_heatloss = pars[1]
-        beta = pars[2]
-        DeltaT = pars[3]
         var1 = input("What is the starting time (seconds) of the combustion? ")
         var2 = input("What is the temperature (Kelvin) at the starting time? ")
         var3 = input("What is the room temperature (Kelvin)? ")
@@ -107,7 +103,7 @@ class Analyse():
         # Nheat = length(idheat);  % number of points in that range.
         Zt = [time[i] - tstart for i in idheat]
         # The temperature in the Zt range from start end
-        TZ = [beta*DeltaT*(math.exp(-i*rate_heatloss) -
+        TZ = [beta*temperature_change*(math.exp(-i*rate_heatloss) -
            math.exp(-i*beta))/(beta - rate_heatloss) for i in Zt]
         Tmod = [0] * len(time)
         for i, j in zip(idheat, TZ):
