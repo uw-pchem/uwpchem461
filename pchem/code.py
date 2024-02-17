@@ -66,7 +66,8 @@ class Analyse():
         return baseline
 
     @staticmethod
-    def caloexp(time, rate_heatgain, rate_heatloss, beta, temperature_change):
+    def caloexp(time, rate_heatgain, rate_heatloss, beta, temperature_change,
+        tstart=145, Tstart=291, Tres=291):
         """
         This models the temperature rise of the Paar Calorimeter
         dT/dt = RIn - RLoss*(Yloop - Tres) + beta*DeltaT*exp(-beta*(time -
@@ -89,13 +90,6 @@ class Analyse():
         Output:
         temperature_curve - n by 1 array, the temperature range [K]
         """
-        # Parse the input
-        var1 = input("What is the starting time (seconds) of the combustion? ")
-        var2 = input("What is the temperature (Kelvin) at the starting time? ")
-        var3 = input("What is the room temperature (Kelvin)? ")
-        tstart = float(var1)
-        Tstart = float(var2)
-        Tres = float(var3)
         # Set up the heating part that goes from tstart 
         # this is the heating region.
         idheat = [i for i, j in enumerate(time) if j >= tstart]
