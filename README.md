@@ -1,92 +1,67 @@
 # Chem 461 - Physical Chemistry Laboratory
-This class gives practical, hands-on experience in applying physical chemistry concepts in
-the laboratory. It provides practice in professional scientific writing and editing. It 
-lays out more in-depth (and less "cookbook") approaches to analyzing data. This repository
-focuses more on the data analysis as it provides an introduction to statistically analyzing
-data through scientific computing.
+This class gives practical, hands-on experience in applying physical chemistry
+concepts in the laboratory. It provides practice in professional scientific
+writing and editing. It lays out more in-depth (and less "cookbook") approaches
+to analyzing data. This repository focuses more on the data analysis as it
+provides an introduction to statistically analyzing data through scientific
+computing.
 
 ## Reading the data
 
 The first step towards data analysis is to read the data into a variable name 
-(or data structure). The following modules can be used:
-```
-get_OO_Data.py
-```
+(or data structure). Use the method called `uwpchem.Opener.getdata()`.
 
-## Experiments
+## Experimental Analysis
 
 ### Exp 42: Infrared Spectra of HCl and DCl
-This experiment estimates the vibrational and rotational transition energy of
-HCl, using a harmonic oscillator model (with anharmonic corrections) for the
-energy spectrum. Following, the thermodynamic and statistical mechanical quantities 
+This experiment determines the vibrational and rotational transition energies
+of HCl, using a harmonic oscillator model (with anharmonic corrections) for the
+IR spectra. Following, the thermodynamic and statistical mechanical quantities 
 of the HCl system are estimated. This estimated quantities of HCl are compared
 to that of DCl to determine the isotope effect between the systems. The
-analysis is demonstrated in:
-```
-exp42_analyze_data.ipynb
-```
-The following code is also used for baseline corrections of the IR spectra:
-```
-getbase.py
-```
-This code is a module within the class object for this experiment.
+analysis is demonstrated in. After reading the dataset, perform a baseline
+correction to clean and smoothen the baseline of the dataset. For such baseline
+correstion use the method called `uwpchem.Analyse.getbase()`. This procedure is
+demonstrated in the jupter notebook called "Demo.ipynb".
 
 ### Exp 1: Spectrometry and Chemical Kinetics
 This experiment estimates the rate constant for the product and intermediate
 species of penicillin hydrolysis. The reaction rate is first-order, thus
 fitting an exponential curve to the absorbance versus time data estimates
-certain parameters of the initial concentration, final concentration and the
-rate constant. Analysis for the fitting procedure is demonstrated in tutorials
-1 and 2. The following code is used for block averaging the large dataset:
-```
-blockavgM.py
-```
-This code is a module within the class object for this experiment.
+the parameters of the initial concentration, final concentration and the rate
+constant. The fitting procedure is demonstrated in the jupyter notebook called 
+"tutorial.ipynb".
 
 ### Exp 3: Heats of Combustion
 This experiment determines the thermodynamic quantities of the combustion of
 cyclohexane, cyclohexene, benzene, hexane, to study the effects of resonance
 stability. The estimated heat capacity of a calorimetry and the temperature
-difference is used. The change in temperature is estimated based on the fit
-model described in the following code:
-```
-caloexp.py
-```
-This code is a module within the class object for this experiment.
+difference is used. The change in temperature is estimated based on the model
+that is used to fit the temperature vs time dataset. This fit model is the
+method called `uwpchem.Analyse.caloexp()`. An example of this fitting procedure
+is demonstrated in the jupyter notebook called "Demo.py".
 
 ### Exp 9: Liquid-Vapor Equilibrium in Binary Systems
-This experiment estimates the Flory-Huggins parameter for the Regular
-Solution Theory that is used as a correction to Raoult's law, which fails to
-describe the phase-diagram for azeotropes. The fit model procedure for the 
-Flory-Huggins solution theory is described in the follwing code:
-```
-rst.py
-```
-This code is a module within the class object for this experiment.
+This experiment estimates the Flory-Huggins parameter, for the Regular
+Solution Theory, that is used as a correction to Raoult's law, which fails to
+describe the phase-diagram for azeotropes. The model of the Regular Solution
+theory is used to fit the phase-diagram. This model as a fit function is given
+by the method called `uwpchem.Analyse.rst()`. An example of this fitting
+procedure is demonstrated in the jupyter notebook called "Demo.py".
 
 ## Tutorials
-The tutorial (jupyter) notebooks demonstrate the techniques of the modules
-used for analysing the dataset of the experiments. For demonstrations of how to
-read a file see:
-```
-tutorial1.ipynb
-```
-This tutorial also introduces the least square fitting procedure, based on the
-module:
-```
-zlstsq.ipynb
-```
-For demonstrations on how to write functions (e.g the exponential functions)
-used for fitting data (e.g. absorbance vs time data) see
-```
-tutorial2.ipynb
-```
-For all the estimated quanties derived from the fit parameters, there must be
-an error analysis. In this class, gaussian error propagation is used, which is
-introduced in
-```
-tutorial3.ipynb
-```
+The jupyter notebook called "tutorial.ipynb" provides instructions on importing
+a package, manipulating a data, plotting a data, fitting a data, calculating
+and plotting associated error bars based on the estimated errors of the fit,
+and importing the `uwpchem` package and its modules `Opener` and `Analyse`.
+
+Further instructions on importing the `uwpchem` package and its modules
+`Opener` and `Analyse` are given in the jupyter notebook called "Demo.ipynb".
+This note book also demonstrate how to use the associated methods in the
+modules: `getdata()` for reading the data; `getbase()` for interpolating a
+baseline for baseline correction on the IR spectrum; `caloexp()` for fitting 
+the data from the calorimetry; and `rst()` for fitting the data from the
+phase-diagram of azeotropes.
 
 <!--- 
 ## Outline for Chem461 Winter Quarter
