@@ -14,7 +14,7 @@ def test_caloexp():
     dnfn = Path(abspath)
     opener = Opener()
     analyse = Analyse()
-    ds = opener.get_data(dnfn)
+    ds = opener.getdata(dnfn)
     temperature_curve = analyse.caloexp(ds[:, 0], 0.003, 0.001, 0.02, 5)    
     ## check shape of file
     try:    

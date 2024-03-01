@@ -29,7 +29,7 @@ def test_get_txt_data():
         print("The shape of ds is ", len(ds[:]), " by ds.shape ", len(ds[0]))
 
     try:
-        ds = testopener.get_data(dnfn)
+        ds = testopener.getdata(dnfn)
         # ignore the third empty column that is read by pandas
         ds_trunc = ds[:, 0:2]
         assert(len(ds_trunc[1]) == 2)
