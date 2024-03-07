@@ -66,39 +66,38 @@ class Analyse():
         return baseline
 
     @staticmethod
-    def caloexp(time, rate_heatgain, rate_heatloss, beta, temperature_change,
-        tstart=145, Tstart=291, Tres=291):
+    def caloexp(time, rate_heatgain, rate_heatloss, rate_reaction, DeltaT,
+        tstart=145, Tstart=291, Troom=293):
         """
-        This models the temperature rise of the Paar Calorimeter
-        dT/dt = RIn - RLoss*(Yloop - Tres) + beta*DeltaT*exp(-beta*(time -
-            tstart))
-        It is defined for scipy's fitting procedure in order to optimized
-        that temperature rise as a function of time
-        Input:    
+        This function models the temperature rise of the Paar Calorimeter
+        dT/dt = rate_heatgain - rate_heatloss*(T - Troom) + rate_reaction*T_rxn
+            = rate_heatgain - rate_heatloss*(T - Troom) 
+            + rate_reaction*DeltaT*exp(-rate_reaction*(time - tstart))
+        The function is defined for scipy's fitting procedure in order to
+        optimized the temperature rise T as a function of time
+        Input:
         time - n by 1 array [sec]
         parameters to optimize:
         rate_heatgain - rate of heat gain from the stirrer [K/sec]
         rate_heatloss - the rate of heat loss [1/sec]
-        beta - rate of heat gain due to reaction [1/sec]
-            heat is on from t=0  to  t= 1/beta/2
-        temperature_chage - net rise of temperature due to chemical reaction [K]
+        rate_reaction - rate of heat gain due to reaction [1/sec]
+            heat is on from t=0  to  t= 1/(rate_reaction/2)
+        DeltaT - net rise of temperature due to chemical reaction [K]
         e.g. of guess parameters to optimize: pars = [0.003 0.001 0.02 5]
         default paremeters as karg
         tstart=30 - begining of reaction (heat of combution) [sec]
         Tstart=292 - the first temperature in the data [K]
-        Tres=290 - temperature of the reservoir (or room) [K]
+        Troom=290 - temperature of the reservoir (or room) [K]
         Output:
-        temperature_curve - n by 1 array, the temperature range [K]
+        Tcurve - n by 1 array, the temperature range [K]
         """
-        # Set up the heating part that goes from tstart 
-        # this is the heating region.
+        # Set up the heating region that goes from tstart 
         idheat = [i for i, j in enumerate(time) if j >= tstart]
-        # the set of indicies for the time that cover the heating range.
-        # Nheat = length(idheat);  % number of points in that range.
         Zt = [time[i] - tstart for i in idheat]
-        # The temperature in the Zt range from start end
-        TZ = [beta*temperature_change*(math.exp(-i*rate_heatloss) -
-           math.exp(-i*beta))/(beta - rate_heatloss) for i in Zt]
+        # The temperature in the Zt range from start to end
+        TZ = [DeltaT*rate_reaction*(math.exp(-i*rate_heatloss) -
+           math.exp(-i*rate_reaction))/(rate_reaction - rate_heatloss) 
+           for i in Zt]
         Tmod = [0] * len(time)
         for i, j in zip(idheat, TZ):
             Tmod[i] = j
@@ -107,16 +106,16 @@ class Analyse():
         # (due to reaction heating)
         Eloss = [math.exp(-i*rate_heatloss) for i in time]
         Zloss = []
-        if( rate_heatloss < 1e-7):  # take the limit if user sets rate_loss=0
+        if(rate_heatloss < 1e-7):  # take the limit if user sets rate_loss=0
             Zloss = time
         else:
             Zloss = [(1 - i)/rate_heatloss for i in Eloss]
     
-        TI = [i*rate_heatgain + j*Tres + (1 - j)*Tres
+        TI = [i*rate_heatgain + j*Troom + (1 - j)*Troom
             for i, j in zip(Zloss, Eloss)]
-        temperature_curve = [i + j for i, j in zip(Tmod, TI)]
+        Tcurve = [i + j for i, j in zip(Tmod, TI)]
     
-        return temperature_curve
+        return Tcurve
 
 
 class Opener():
@@ -145,13 +144,13 @@ class Opener():
         method to read the cvs data for exp 42
         """
         ds = []
-
+ 
         with open(dnfn, 'rt') as f:
-
+ 
             # skip header lines
             for i in range(headerlines):
                 next(f)
-
+ 
             # readline and convert string to number array
             for line in f:
                 linetrunc_x = line[0:6].strip()
@@ -160,50 +159,7 @@ class Opener():
                 data = [float(linetrunc_x), float(linetrunc_y)]
                 data_abs = [data[0], -np.log10(data[1]/100)] 
                 ds.append(data_abs)
-
+ 
         return ds, dnfn
-
-
-# class Fitpolynomial():
-#     """
-#     Use the method of least-squares to fit a polynomial to a dataset
-#     """
-# 
-#     def __init__(self):
-#         """
-#         par -  k by 1 array, the elements are the fit parameters,
-#             where n is the degree of the polynomial
-#         yf - n by 1 array, the estimated y-values based on the fit 
-#             parameters:
-#             yf = M*par
-#             yf = par[0]*x^k + par[1]*x^(k - 1) ... + par[k]*x^0
-#         M - n by k array, model matrix:
-#             M = [x^k + x^(k - 1) ... + x^0]
-#         V - k by k array, the reduced "variance-covariance" matrix:
-#             V = M^(-1)*M
-#         stefit - standard errors of the fit's estimated y-values
-#         stepar - standard errors of the parameters
-#         steyf - standard deviation of the fit's estimated y-values
-#         """
-#         self.par = []
-#         self.stepar = []
-#         self.stefit = []
-#         self.steyf = []
-# 
-#     def zlstsq(self, xdata, yata, degree):
-#         """
-#         the least-squares fitting procedure to the dataset:
-#         Input:
-#         xdata - n by 1 array, x-values of dataset
-#         ydata - n by 1 array, y-values of dataset
-#         degree - scalar, the degree of the polynomial
-#         """
-#         x = np.array(xdata); y = np.array(ydata)
-#         # the model matrix: M = [x^k + x^(k - 1) ... + x^0]
-#         M = np.array([x**k for k in reversed(range((degree + 1)))])
-#         M = M.transpose()
-#         # this is the heart of this method, which depends on the fact that
-#         # there exists an inverse matrix of the model matrix
-#         inverseM = linalg.inv(M)
 
 
