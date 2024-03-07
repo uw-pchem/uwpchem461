@@ -112,9 +112,9 @@ class Analyse():
         else:
             Zloss = [(1 - i)/rate_heatloss for i in Eloss]
     
-        TI = [i*rate_heatgain + j*Troom + (1 - j)*Troom
+        TI = [i*rate_heatgain + j*Tstart + (1 - j)*Troom
             for i, j in zip(Zloss, Eloss)]
-        Tcurve = [i + j for i, j in zip(Tmod, TI)]
+        Tcurve = [i + j for i, j in zip(TI, Tmod)]
     
         return Tcurve
 
