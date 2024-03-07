@@ -69,12 +69,13 @@ class Analyse():
     def caloexp(time, rate_heatgain, rate_heatloss, rate_reaction, DeltaT,
         tstart=145, Tstart=291, Troom=293):
         """
-        This function models the temperature rise of the Paar Calorimeter
+        The function is defined for scipy's fitting procedure in order to
+        optimized the temperature rise T as a function of time, t
+        This function models the temperature rise of the Paar Calorimeter in
+        experiment 3:
         dT/dt = rate_heatgain - rate_heatloss*(T - Troom) + rate_reaction*T_rxn
             = rate_heatgain - rate_heatloss*(T - Troom) 
-            + rate_reaction*DeltaT*exp(-rate_reaction*(time - tstart))
-        The function is defined for scipy's fitting procedure in order to
-        optimized the temperature rise T as a function of time
+            + rate_reaction*DeltaT*exp(-rate_reaction*(t - tstart))
         Input:
         time - n by 1 array [sec]
         parameters to optimize:
