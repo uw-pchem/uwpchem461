@@ -51,18 +51,25 @@ by the method called `uwpchem.Analyse.rst()`. An example of this fitting
 procedure is demonstrated in the jupyter notebook called "Demo.ipynb".
 
 ## Tutorials
-The jupyter notebook called "tutorial.ipynb" provides instructions on importing
-a package, manipulating a data, plotting a data, fitting a data, calculating
-and plotting associated error bars based on the estimated errors of a fit,
-and importing the `uwpchem` package and its modules `Opener` and `Analyse`.
+In the folder named tutoiral, the jupyter notebook "tutorial.ipynb" provides
+instructions on importing a package, manipulating a data, plotting a data, 
+fitting a data, calculating and plotting associated error bars based on the 
+estimated errors of a fit.  
 
-Further instructions on importing the `uwpchem` package and its modules
-`Opener` and `Analyse` are given in the jupyter notebook called "Demo.ipynb".
-This notebook also demonstrate how to use the associated methods in the
-modules: `getdata()` for reading the data; `getbase()` for interpolating a
-baseline for baseline correction on the IR spectrum; `caloexp()` for fitting 
-the data from the calorimetry; and `rst()` for fitting the data from the
-phase-diagram of azeotropes.
+The tutorial's notebook gives instructions on how to import the `uwpchem`
+package and its modules `Opener` and `Analyse`, and how to use the associated
+methods in the modules: `getdata()` for reading the data; `getbase()` for 
+interpolating a baseline (for baseline correction) on the IR spectrum; 
+`caloexp()` for fitting the data from the calorimeter; and `rst()` for fitting
+the data of the phase-diagram of an azeotrope.
+
+# Further instructions on importing the `uwpchem` package and its modules
+# `Opener` and `Analyse` are given in the jupyter notebook called "Demo.ipynb".
+# This notebook also demonstrate how to use the associated methods in the
+# modules: `getdata()` for reading the data; `getbase()` for interpolating a
+# baseline for baseline correction on the IR spectrum; `caloexp()` for fitting 
+# the data from the calorimetry; and `rst()` for fitting the data from the
+# phase-diagram of azeotropes.
 
 <!--- 
 ## Outline for Chem461 Winter Quarter
