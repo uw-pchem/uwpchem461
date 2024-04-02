@@ -1,3 +1,3 @@
 __version__ = "1.0"
 
-import uwpchem.pchem
+from . import pchem
