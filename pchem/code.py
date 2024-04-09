@@ -118,67 +118,69 @@ class Analyse():
     
         return Tcurve
 
-    def rst_exp9(pars, ATXn):
+    def rst_exp9(vap_pars, FHP):
         """
         A function to simulate the liquid-vapor phase-diagram for two liquids
         Using Regular Solution Theory (RST) for the data from Exp 9, Chem 461
         Needed: the boiling temperature (K) and the Heat of Vaporization
         (KJ/mol) of two liquids A and B
         Input:
-        ATXn - The Flory attraction parameter must be set
-          ATXn = 0 give ideal solution (Raoult's Law) phase diagram
-          ATXn ranges from about -1 to 1.
-        pars - the parameters, pars = [ TbA  dHA  TbB  dHB ]
-          TbA - ref. boiling point of pure A (preferably at 1 atm) [Kelvin]
-          TbB - ref. boiling point of B
-          dHA - heat of vaporization of pure A [KJ/mol]
-          dHB - heat of vaporization of pure B
-            eg:  Pars  =  [ 383.8  33.18 390.6 43.29 ];
+        FHP - The Flory Huggins (attraction) parameter must be set
+          FHP = 0 give ideal solution (Raoult's Law) phase diagram
+          FHP ranges from about -1 to 1.
+        vap_pars - the parameters of vaporization, 
+            pars = [TboilA, enthalpy_vapA, TboilB, enthalpy_vapB]
+            TboilA - ref. boiling point of pure A (preferably at 1 atm) [Kelvin]
+            TboilB - ref. boiling point of B
+            enthalpy_vapA - heat of vaporization of pure A [KJ/mol]
+            enthalpy_vapB - heat of vaporization of pure B
+            eg:  pars  =  [383.8, 33.18, 390.6, 43.29];
         Output:
           xB - the mole fraction of B in liquid's phase
           yB - the mole fraction of B in vapor's phase and 
-          Tbest - the temperature at equilibrium
-        NB: The total pressure is set to 1 Atm,  but can be changed.
+          Tbest - the equilibrium boiling temperature at which 
+            xB and yB are determined
+        NB: The total pressure is set to 1 atm,  but can be changed.
         """
         # constants
         npts = 200;
-        xB = linspace(0, 1 npts)
+        xB = linspace(0, 1, npts)
         xA = 1 - xB
         R = 8.314  # gas constant in J/(mol K)
         TboilA = pars[0]; enthalpy_vapA = pars[1]*1e3/R/TboilA;
         TboilB = pars[2]; enthalpy_vapB = pars[3]*1e3/R/TboilB;
-        PboilA = 1 # [atm]; PboilB = 1;
+        PboilA = 1; PboilB = 1;  # [atm]
+        P0 = 1; T0 = 360; Ptot = 1;
 
         # The Clausius Clapeyron Relation
-        P0 = 1; T0 = 360; 
-        PA_pure = np.exp(enthalpy_vapA*(T0 - TboilA)/T0)
-        PB_pure = np.exp(enthalpy_vapB*(T0 - TboilB)/T0)
-        # varying T
-        # T = np.linspace(TboilB, TboilA, npts)
-        # PA = np.exp(enthalpy_vapA*(T - TboilA)/T)
-        # PA = np.exp(enthalpy_vapA*(T - TboilA)/T)
-        # xA = (Ptot - PB)/(PA - PB)
-        # yA = (xA*PA)/Ptot
+        PA_pure = lambda Tx : np.exp(enthalpy_vapA*(Tx - TboilA)/Tx)*P0
+        PB_pure = lambda Tx : np.exp(enthalpy_vapB*(Tx - TboilB)/Tx)*P0
+        # xA = (Ptot - PB_pure(T0))/(PA_pure(T0) - PB_pure(T0))
+        # yA = (xA*PA_pure(T0))/Ptot
 
         # Using regulary solution theory, we calculate the partial presures
-        lnPPB = np.log(xB) + ATXn*(xA**2);
-        lnPPA = np.log(xA) + ATXn*(xB**2);
-        PB = np.exp(lnPPB)*PB_pure
-        PA = np.exp(lnPPA)*PA_pure
-        Ptot = PA + PB
-        yB = PB/Ptot
-
-        # The equilibrium temperature for the liquid-vapor mole fractions
+        # method 1: calculate at fixed T0
+        # lnPPB = np.log(xB) + FHP*(xA**2);
+        # PB = np.exp(lnPPB)*PB_pure(T0)
+        # yB = xB*np.exp(FHP*(xB**2))*PB_pure(T0)/Ptot
+        # method 2:
+        # Find the equilibrium temperature for the liquid-vapor mole fractions
         # First, extend the temperature range to find the answer
-        # the extended range should be ten times the magnitude of ATXn
-        pad = 10*np.rint(ATXn);
-        range_T = 
+        # the extended range should be ten times the magnitude of FHP
+        pad = 10*np.rint(FHP);
+        range_T = np.array(
+            np.minimum(TboilA, TboilB) - pad, np.maximum(TboilA, TboilB) + pad
+            )
+        Tbest = np.zeros(npts)
+        for k in range(0, npts):
+            PA = lambda Tx : xA[k]*np.exp(FHP*(xA[k]**2))*PA_pure(Tx)
+            PB = lambda Tx : xB[k]*np.exp(FHP*(xB[k]**2))*PB_pure(Tx)
+            find_T = lambda Tx : PA(Tx) + PB(Tx) - Ptot
+            Tbest[k] = sp.optimize.newton(find_T, range_T)
 
-        # define lambda function
-        # the vapor input parameters
-        vap_pars = [enthalpy_vapA, enthalpy_vapB,
-            TboilA, TboilB,
-            PboilA, PboilB]
+        yB = xB*np.exp(FHP*(xB**2))*PB_pure(Tbest)/Ptot
+
+        return xB, yB, Tbest
 
 
 class Opener():
@@ -224,5 +226,3 @@ class Opener():
                 ds.append(data_abs)
  
         return ds, dnfn
-
-
