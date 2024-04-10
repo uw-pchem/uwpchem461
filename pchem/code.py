@@ -118,7 +118,7 @@ class Analyse():
     
         return Tcurve
 
-    def rst_exp9(vap_pars, FHP):
+    def rst_exp9(self, var_pars, FHP):
         """
         A function to simulate the liquid-vapor phase-diagram for two liquids
         Using Regular Solution Theory (RST) for the data from Exp 9, Chem 461
@@ -134,7 +134,7 @@ class Analyse():
             TboilB - ref. boiling point of B
             enthalpy_vapA - heat of vaporization of pure A [KJ/mol]
             enthalpy_vapB - heat of vaporization of pure B
-            eg:  pars  =  [383.8, 33.18, 390.6, 43.29];
+            eg:  var_pars  =  [383.8, 33.18, 390.6, 43.29];
         Output:
           xB - the mole fraction of B in liquid's phase
           yB - the mole fraction of B in vapor's phase and 
@@ -144,11 +144,11 @@ class Analyse():
         """
         # constants
         npts = 200;
-        xB = linspace(0, 1, npts)
+        xB = np.linspace(0, 1, npts)
         xA = 1 - xB
         R = 8.314  # gas constant in J/(mol K)
-        TboilA = pars[0]; enthalpy_vapA = pars[1]*1e3/R/TboilA;
-        TboilB = pars[2]; enthalpy_vapB = pars[3]*1e3/R/TboilB;
+        TboilA = var_pars[0]; enthalpy_vapA = var_pars[1]*1e3/R/TboilA;
+        TboilB = var_pars[2]; enthalpy_vapB = var_pars[3]*1e3/R/TboilB;
         PboilA = 1; PboilB = 1;  # [atm]
         P0 = 1; T0 = 360; Ptot = 1;
 
@@ -158,7 +158,7 @@ class Analyse():
         # xA = (Ptot - PB_pure(T0))/(PA_pure(T0) - PB_pure(T0))
         # yA = (xA*PA_pure(T0))/Ptot
 
-        # Using regulary solution theory, we calculate the partial presures
+        # Using regulary solution theory, we calculate the partial pressures
         # method 1: calculate at fixed T0
         # lnPPB = np.log(xB) + FHP*(xA**2);
         # PB = np.exp(lnPPB)*PB_pure(T0)
