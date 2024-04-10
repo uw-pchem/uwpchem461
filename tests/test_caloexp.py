@@ -2,7 +2,7 @@ import numpy as np
 import os.path
 from pathlib import Path
 
-from pchem import Opener, Analyse
+from chem461.pchem import Opener, Analyse
 
 
 def test_caloexp():

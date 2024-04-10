@@ -1,7 +1,7 @@
 from pathlib import Path
 import os.path
 
-from pchem import Opener
+from chem461.pchem import Opener
 
 
 def test_get_txt_data():
