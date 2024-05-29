@@ -173,12 +173,12 @@ class Analyse():
             )
         Tbest = np.zeros(npts)
         for k in range(0, npts):
-            PA = lambda Tx : xA[k]*np.exp(FHP*(xA[k]**2))*PA_pure(Tx)
-            PB = lambda Tx : xB[k]*np.exp(FHP*(xB[k]**2))*PB_pure(Tx)
+            PA = lambda Tx : xA[k]*np.exp(FHP*(xB[k]**2))*PA_pure(Tx)
+            PB = lambda Tx : xB[k]*np.exp(FHP*(xA[k]**2))*PB_pure(Tx)
             find_T = lambda Tx : PA(Tx) + PB(Tx) - Ptot
             Tbest[k] = sp.optimize.newton(find_T, range_T)
 
-        yB = xB*np.exp(FHP*(xB**2))*PB_pure(Tbest)/Ptot
+        yB = xB*np.exp(FHP*(xA**2))*PB_pure(Tbest)/Ptot
 
         return xB, yB, Tbest
 
