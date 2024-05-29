@@ -125,59 +125,63 @@ class Analyse():
         Needed: the boiling temperature (K) and the Heat of Vaporization
         (KJ/mol) of two liquids A and B
         Input:
-        FHP - The Flory Huggins (attraction) parameter must be set
-          FHP = 0 give ideal solution (Raoult's Law) phase diagram
-          FHP ranges from about -1 to 1.
+        FHP - FHP is the Flory Huggins (attraction) parameter must be set.
+          Set FHP = 0 to give a phase diagram for an ideal solution (Raoult's Law).
+          For Regular Solution Theory, the particular value for FHP depends on the molecules you use. 
+          For the alcohols in this Experiment 9, FHP is a value somewhere in the range of about -1 to 1.
+          You will make a few guesses to find a value of FHP that works with your data.
         vap_pars - the parameters of vaporization, 
             pars = [TboilA, enthalpy_vapA, TboilB, enthalpy_vapB]
-            TboilA - ref. boiling point of pure A (preferably at 1 atm) [Kelvin]
-            TboilB - ref. boiling point of B
+            TboilA - ref. boiling point of pure A (preferably measured at 1 atm) [Units of Kelvin]
+            TboilB - ref. boiling point of pure B
             enthalpy_vapA - heat of vaporization of pure A [KJ/mol]
             enthalpy_vapB - heat of vaporization of pure B
             eg:  var_pars  =  [383.8, 33.18, 390.6, 43.29];
         Output:
-          xB - the mole fraction of B in liquid's phase
-          yB - the mole fraction of B in vapor's phase and 
+          xB - the mole fraction of B in the solution
+          yB - the mole fraction of B in vapor phase 
           Tbest - the equilibrium boiling temperature at which 
             xB and yB are determined
-        NB: The total pressure is set to 1 atm,  but can be changed.
+        Note: The total pressure, Ptot, is set to 1 atm, but can be changed.
         """
         # constants
         npts = 200;
         xB = np.linspace(0, 1, npts)
-        xA = 1 - xB
-        R = 8.314  # gas constant in J/(mol K)
+        xA = 1 - xB                   # This just says the mole factions add to 1.
+        R = 8.314                     # Units of gas constant are J/(mol K)
         TboilA = var_pars[0]; enthalpy_vapA = var_pars[1]*1e3/R/TboilA;
         TboilB = var_pars[2]; enthalpy_vapB = var_pars[3]*1e3/R/TboilB;
-        PboilA = 1; PboilB = 1;  # [atm]
-        P0 = 1; T0 = 360; Ptot = 1;
+        PboilA = 1; PboilB = 1;       # Units of P are atm.
+        P0 = 1; T0 = 360; Ptot = 1;   # Units of T are K. Units of P are atm.
 
         # The Clausius Clapeyron Relation
+        # You may be most familiar with this equation from textbooks
+        # in the form P*/Pref = exp [(-deltaH/R)(1/T - 1/Tref).
         PA_pure = lambda Tx : np.exp(enthalpy_vapA*(Tx - TboilA)/Tx)*P0
         PB_pure = lambda Tx : np.exp(enthalpy_vapB*(Tx - TboilB)/Tx)*P0
         # xA = (Ptot - PB_pure(T0))/(PA_pure(T0) - PB_pure(T0))
         # yA = (xA*PA_pure(T0))/Ptot
 
-        # Using regulary solution theory, we calculate the partial pressures
-        # method 1: calculate at fixed T0
-        # lnPPB = np.log(xB) + FHP*(xA**2);
-        # PB = np.exp(lnPPB)*PB_pure(T0)
-        # yB = xB*np.exp(FHP*(xB**2))*PB_pure(T0)/Ptot
-        # method 2:
-        # Find the equilibrium temperature for the liquid-vapor mole fractions
-        # First, extend the temperature range to find the answer
-        # the extended range should be ten times the magnitude of FHP
+        # Using regular solution theory, we calculate the partial pressures.
+        # Find the equilibrium temperature for the liquid-vapor mole fractions.
+        # First, extend the temperature range to find the answer.
+        # The extended range should be ten times the magnitude of FHP.
         pad = 10*np.rint(FHP);
         range_T = np.array(
             np.minimum(TboilA, TboilB) - pad, np.maximum(TboilA, TboilB) + pad
             )
+        
+        # Now, the following lines of code optimize to find the best
+        # boiling temperature that fits the Regular Solution Theory equation
         Tbest = np.zeros(npts)
         for k in range(0, npts):
             PA = lambda Tx : xA[k]*np.exp(FHP*(xB[k]**2))*PA_pure(Tx)
             PB = lambda Tx : xB[k]*np.exp(FHP*(xA[k]**2))*PB_pure(Tx)
-            find_T = lambda Tx : PA(Tx) + PB(Tx) - Ptot
+            # The next two lines simply require Ptot = PA + PB
+            find_T = lambda Tx : PA(Tx) + PB(Tx) - Ptot       
             Tbest[k] = sp.optimize.newton(find_T, range_T)
 
+        # The line below plugs in the best boiling temp into the RST equation
         yB = xB*np.exp(FHP*(xA**2))*PB_pure(Tbest)/Ptot
 
         return xB, yB, Tbest
